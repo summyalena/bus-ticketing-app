@@ -1,0 +1,186 @@
+@for (item of searchResults(); track $index) {
+<div class="search-results-page">
+  <!-- Search Summary Header -->
+  <div class="search-summary">
+    <div class="summary-content">
+      <div class="route-info">
+        <div class="location-badge from">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ Search.fromLocation }}
+        </div>
+        <div class="arrow">
+          <i class="fas fa-arrow-right"></i>
+        </div>
+        <div class="location-badge to">
+          <i class="fas fa-map-marker-alt"></i>
+          {{ Search.toLocation }}
+        </div>
+      </div>
+      <div class="date-info">
+        <i class="fas fa-calendar-day"></i>
+        {{ Search.travelDate | date: 'EEEE, MMMM d, y' }}
+      </div>
+      <div class="results-count">
+        <i class="fas fa-bus"></i>
+        {{ filteredResults().length }} buses found
+      </div>
+    </div>
+  </div>
+
+  <div class="results-container">
+    <!-- Filters & Sort Sidebar -->
+    <aside class="filters-sidebar">
+      <div class="filter-section">
+        <h3>
+          <i class="fas fa-filter"></i>
+          Filters
+        </h3>
+
+        <!-- Sort By -->
+        <div class="filter-group">
+          <label>
+            <i class="fas fa-sort"></i>
+            Sort By
+          </label>
+          <select 
+            class="filter-select" 
+            [value]="sortBy()" 
+            (change)="updateSort($any($event.target).value)"
+          >
+            <option value="departureTime">Departure Time</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
+            <option value="availableSeats">Available Seats</option>
+          </select>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-group">
+          <label>
+            <i class="fas fa-dollar-sign"></i>
+            Max Price: ₦{{ filterPrice() }}
+          </label>
+          <input 
+            type="range" 
+            min="0" 
+            max="10000" 
+            step="500"
+            [value]="filterPrice()"
+            (input)="updatePriceFilter(+$any($event.target).value)"
+            class="price-slider"
+          />
+        </div>
+
+        <!-- Seats Filter -->
+        <div class="filter-group">
+          <label>
+            <i class="fas fa-chair"></i>
+            Min Available Seats
+          </label>
+          <input 
+            type="number" 
+            min="0" 
+            [value]="filterSeats()"
+            (input)="updateSeatsFilter(+$any($event.target).value)"
+            class="seats-input"
+            placeholder="Any"
+          />
+        </div>
+      </div>
+    </aside>
+
+    <!-- Bus Results List -->
+    <main class="results-main">
+      @if (filteredResults().length === 0) {
+        <div class="no-results">
+          <i class="fas fa-bus-alt"></i>
+          <h3>No buses found</h3>
+          <p>Try adjusting your filters or search criteria</p>
+        </div>
+      } @else {
+        @for (bus of filteredResults(); track bus.scheduleId) {
+          <div class="bus-card">
+            <!-- Bus Header -->
+            <div class="bus-header">
+              <div class="bus-company">
+                <div class="bus-icon">
+                  <i class="fas fa-bus"></i>
+                </div>
+                <div class="company-info">
+                  <h3>{{ bus.vendorName }}</h3>
+                  <p class="bus-name">{{ bus.busName }} - {{ bus.busVehicleNo }}</p>
+                </div>
+              </div>
+              <div class="bus-rating">
+                <i class="fas fa-star"></i>
+                <span>4.5</span>
+              </div>
+            </div>
+
+            <!-- Journey Details -->
+            <div class="journey-details">
+              <div class="time-info">
+                <div class="departure">
+                  <span class="time">{{ formatTime(bus.departureTime) }}</span>
+                  <span class="location">{{ bus.fromLocationName }}</span>
+                </div>
+                
+                <div class="journey-line">
+                  <div class="duration">
+                    <i class="fas fa-clock"></i>
+                    {{ calculateDuration(bus.departureTime, bus.arrivalTime) }}
+                  </div>
+                  <div class="line">
+                    <div class="dot"></div>
+                    <div class="dashed"></div>
+                    <div class="dot"></div>
+                  </div>
+                </div>
+                
+                <div class="arrival">
+                  <span class="time">{{ formatTime(bus.arrivalTime) }}</span>
+                  <span class="location">{{ bus.toLocationName }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bus Info Footer -->
+            <div class="bus-footer">
+              <div class="bus-stats">
+                <div class="stat">
+                  <i class="fas fa-chair"></i>
+                  <span>{{ bus.availableSeats }}/{{ bus.totalSeats }} seats</span>
+                </div>
+                <div class="stat">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>Insured</span>
+                </div>
+              </div>
+
+              <div class="booking-section">
+                <div class="price-info">
+                  <span class="price-label">Starting from</span>
+                  <span class="price">₦{{ bus.price }}</span>
+                </div>
+                <button 
+                  class="btn-book" 
+                  (click)="bookBus(bus.scheduleId)"
+                  [disabled]="bus.availableSeats === 0"
+                >
+                  @if (bus.availableSeats === 0) {
+                    <i class="fas fa-times-circle"></i>
+                    Sold Out
+                  } @else {
+                    <i class="fas fa-ticket-alt"></i>
+                    Book Now
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </main>
+  </div>
+</div>
+}

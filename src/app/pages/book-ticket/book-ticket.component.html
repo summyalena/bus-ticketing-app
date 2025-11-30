@@ -1,0 +1,387 @@
+<div class="booking-page">
+  @if (busSchedule(); as schedule) {
+  <!-- Bus Info Header -->
+  <div class="bus-info-header">
+    <div class="header-content">
+      <button class="btn-back" (click)="router.navigate(['/search'])">
+        <i class="fas fa-arrow-left"></i>
+        Back to Results
+      </button>
+
+      <div class="bus-details">
+        <div class="bus-icon">
+          <i class="fas fa-bus"></i>
+        </div>
+        <div class="details-text">
+          <h2>{{ schedule.busName }}</h2>
+          <p>{{ schedule.busVehicleNo }}</p>
+        </div>
+      </div>
+
+      <div class="journey-summary">
+        <div class="time-point">
+          <span class="time">{{ formatTime(schedule.departureTime) }}</span>
+          <span class="label">Departure</span>
+        </div>
+        <div class="duration">
+          <i class="fas fa-clock"></i>
+          {{ calculateDuration(schedule.departureTime, schedule.arrivalTime) }}
+        </div>
+        <div class="time-point">
+          <span class="time">{{ formatTime(schedule.arrivalTime) }}</span>
+          <span class="label">Arrival</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="booking-content">
+    <!-- Left Section: Tabs -->
+    <div class="left-section">
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'seats'"
+          (click)="switchTab('seats')"
+        >
+          <i class="fas fa-chair"></i>
+          Select Seats
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab() === 'info'"
+          (click)="switchTab('info')"
+        >
+          <i class="fas fa-info-circle"></i>
+          Bus Info
+        </button>
+      </div>
+
+      <!-- Seats Tab -->
+      @if (activeTab() === 'seats') {
+      <div class="seats-section">
+        <div class="seats-header">
+          <h3>Select Your Seats</h3>
+          <div class="seat-legend">
+            <div class="legend-item">
+              <div class="seat-icon available"></div>
+              <span>Available</span>
+            </div>
+            <div class="legend-item">
+              <div class="seat-icon selected"></div>
+              <span>Selected</span>
+            </div>
+            <div class="legend-item">
+              <div class="seat-icon booked"></div>
+              <span>Booked</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bus Layout -->
+        <div class="bus-layout">
+          <!-- Driver Section -->
+          <div class="driver-section">
+            <div class="steering-wheel">
+              <i class="fas fa-dharmachakra"></i>
+            </div>
+            <span>Driver</span>
+          </div>
+
+          <!-- Seats Grid -->
+          <div class="seats-grid">
+            @for (seat of seats(); track seat.seatNumber) {
+            <button
+              class="seat"
+              [class.booked]="seat.isBooked"
+              [class.selected]="seat.isSelected"
+              [disabled]="seat.isBooked"
+              (click)="toggleSeat(seat.seatNumber)"
+            >
+              <i class="fas fa-chair"></i>
+              <span class="seat-number">{{ seat.seatNumber }}</span>
+            </button>
+
+            @if (seat.seatNumber % 4 === 2) {
+            <div class="aisle"></div>
+            } }
+          </div>
+        </div>
+
+        <!-- Passenger Details Form -->
+        <div class="passenger-form">
+  <h3>
+    <i class="fas fa-user"></i>
+    Passenger Details
+  </h3>
+  
+  @if (passengers().length === 0) {
+    <p class="empty-state">
+      <i class="fas fa-info-circle"></i>
+      Select seats above to add passengers
+    </p>
+  } @else {
+    <div class="passengers-list">
+      @for (passenger of passengers(); track passenger.seatNo; let i = $index) {
+        <div class="passenger-card">
+          <div class="seat-indicator">
+            <i class="fas fa-chair"></i>
+            Seat {{ passenger.seatNo }}
+          </div>
+
+          <div class="form-grid">
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="name-{{ i }}">
+                Full Name *
+              </label>
+              <input
+                id="name-{{ i }}"
+                type="text"
+                placeholder="Enter passenger name"
+                [value]="passenger.passengerName"
+                (input)="updatePassenger(i, 'passengerName', $any($event.target).value)"
+              />
+            </div>
+
+            <!-- Age -->
+            <div class="form-group">
+              <label for="age-{{ i }}">
+                Age *
+              </label>
+              <input
+                id="age-{{ i }}"
+                type="number"
+                min="1"
+                max="120"
+                placeholder="Enter age"
+                [value]="passenger.age"
+                (input)="updatePassenger(i, 'age', +$any($event.target).value)"
+              />
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group gender-group">
+              <label>Gender *</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    [name]="'gender-' + i"
+                    value="Male"
+                    [checked]="passenger.gender === 'Male'"
+                    (change)="updatePassenger(i, 'gender', 'Male')"
+                  />
+                  <span>Male</span>
+                </label>
+                <label class="radio-label">
+                  <input
+                    type="radio"
+                    [name]="'gender-' + i"
+                    value="Female"
+                    [checked]="passenger.gender === 'Female'"
+                    (change)="updatePassenger(i, 'gender', 'Female')"
+                  />
+                  <span>Female</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
+      </div>
+      }
+
+      <!-- Bus Info Tab -->
+      @if (activeTab() === 'info') {
+      <div class="info-section">
+        <div class="info-card">
+          <h3>
+            <i class="fas fa-bus-alt"></i>
+            Bus Information
+          </h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Bus Name</span>
+              <span class="value">{{ schedule.busName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Vehicle Number</span>
+              <span class="value">{{ schedule.busVehicleNo }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Total Seats</span>
+              <span class="value">{{ schedule.totalSeats }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Available Seats</span>
+              <span class="value">{{
+                schedule.totalSeats - bookedSeats().length
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>
+            <i class="fas fa-calendar-alt"></i>
+            Schedule Details
+          </h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Travel Date</span>
+              <span class="value">{{ formatDate(schedule.scheduleDate) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Departure Time</span>
+              <span class="value">{{
+                formatTime(schedule.departureTime)
+              }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Arrival Time</span>
+              <span class="value">{{ formatTime(schedule.arrivalTime) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Journey Duration</span>
+              <span class="value">{{
+                calculateDuration(schedule.departureTime, schedule.arrivalTime)
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <h3>
+            <i class="fas fa-dollar-sign"></i>
+            Pricing Information
+          </h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Base Fare</span>
+              <span class="value price">₦{{ schedule.price }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Service Tax</span>
+              <span class="value">Included</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card amenities">
+          <h3>
+            <i class="fas fa-check-circle"></i>
+            Amenities & Features
+          </h3>
+          <div class="amenities-grid">
+            <div class="amenity-item">
+              <i class="fas fa-wifi"></i>
+              <span>Free WiFi</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fas fa-snowflake"></i>
+              <span>AC</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fas fa-charging-station"></i>
+              <span>Charging</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fas fa-water"></i>
+              <span>Water</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fas fa-shield-alt"></i>
+              <span>Insured</span>
+            </div>
+            <div class="amenity-item">
+              <i class="fas fa-tv"></i>
+              <span>Entertainment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Right Section: Booking Summary -->
+    <aside class="booking-summary">
+      <div class="summary-card">
+        <h3>
+          <i class="fas fa-receipt"></i>
+          Booking Summary
+        </h3>
+
+        <div class="summary-content">
+          <!-- Selected Seats -->
+          <div class="summary-section">
+            <h4>Selected Seats</h4>
+            @if (selectedSeats().length > 0) {
+            <div class="selected-seats-list">
+              @for (seat of selectedSeats(); track seat.seatNumber) {
+              <div class="seat-badge">
+                <i class="fas fa-chair"></i>
+                Seat {{ seat.seatNumber }}
+                <button
+                  class="remove-seat"
+                  (click)="toggleSeat(seat.seatNumber)"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              }
+            </div>
+            } @else {
+            <p class="empty-state">No seats selected</p>
+            }
+          </div>
+
+          <!-- Price Breakdown -->
+          <div class="summary-section price-breakdown">
+            <div class="price-row">
+              <span>Seat(s) ({{ selectedSeats().length }})</span>
+              <span>₦{{ schedule.price }} × {{ selectedSeats().length }}</span>
+            </div>
+            <div class="price-row">
+              <span>Base Fare</span>
+              <span>₦{{ schedule.price * selectedSeats().length }}</span>
+            </div>
+            <div class="price-row">
+              <span>Service Tax</span>
+              <span class="included">Included</span>
+            </div>
+            <div class="price-row total">
+              <span>Total Amount</span>
+              <span>₦{{ totalAmount() }}</span>
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <button
+            class="btn-proceed"
+            [disabled]="selectedSeats().length === 0"
+            (click)="postBusBooking()"
+          >
+            <i class="fas fa-credit-card"></i>
+            <!-- Proceed to Payment @if (totalAmount() > 0) {
+            <span class="amount">₦{{ totalAmount() }}</span>
+            } -->
+            Proceed to book
+          </button>
+
+          <!-- Cancellation Policy -->
+          <div class="policy-note">
+            <i class="fas fa-info-circle"></i>
+            <p>Free cancellation up to 2 hours before departure</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+  }
+</div>

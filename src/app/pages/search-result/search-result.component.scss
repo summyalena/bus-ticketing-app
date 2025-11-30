@@ -1,0 +1,498 @@
+$primary-dark: #2c3e50;
+$secondary-dark: #34495e;
+$accent-blue: #3498db;
+$accent-green: #27ae60;
+$accent-red: #e74c3c;
+$text-white: #ffffff;
+$text-light: rgba(255, 255, 255, 0.9);
+$text-muted: rgba(255, 255, 255, 0.6);
+
+.search-results-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $primary-dark 0%, $secondary-dark 100%);
+  padding-bottom: 4rem;
+}
+
+// Search Summary Header
+.search-summary {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+
+  .summary-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .route-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .location-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: $text-white;
+
+    &.from {
+      background: rgba(231, 76, 60, 0.2);
+      border: 2px solid rgba(231, 76, 60, 0.4);
+    }
+
+    &.to {
+      background: rgba(39, 174, 96, 0.2);
+      border: 2px solid rgba(39, 174, 96, 0.4);
+    }
+  }
+
+  .arrow {
+    color: $accent-blue;
+    font-size: 1.5rem;
+  }
+
+  .date-info,
+  .results-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: $text-light;
+    font-size: 1rem;
+
+    i {
+      color: $accent-blue;
+    }
+  }
+}
+
+// Results Container
+.results-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 2rem;
+  padding: 0 2rem;
+}
+
+// Filters Sidebar
+.filters-sidebar {
+  .filter-section {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 100px;
+
+    h3 {
+      color: $text-white;
+      font-size: 1.3rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      i {
+        color: $accent-blue;
+      }
+    }
+  }
+
+  .filter-group {
+    margin-bottom: 1.5rem;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $text-light;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      font-size: 0.95rem;
+
+      i {
+        color: $accent-blue;
+      }
+    }
+
+    .filter-select,
+    .seats-input {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      color: $text-white;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        outline: none;
+        border-color: $accent-blue;
+        background: rgba(255, 255, 255, 0.15);
+      }
+    }
+
+    .price-slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.2);
+      outline: none;
+      -webkit-appearance: none;
+
+      &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: $accent-blue;
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+      }
+
+      &::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: $accent-blue;
+        cursor: pointer;
+        border: none;
+      }
+    }
+  }
+}
+
+// Bus Card
+.bus-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .bus-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    .bus-company {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .bus-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, $accent-blue 0%, #5dade2 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          font-size: 1.5rem;
+          color: $text-white;
+        }
+      }
+
+      .company-info {
+        h3 {
+          color: $text-white;
+          font-size: 1.2rem;
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+        }
+
+        .bus-name {
+          color: $text-muted;
+          font-size: 0.9rem;
+        }
+      }
+    }
+
+    .bus-rating {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(241, 196, 15, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+
+      i {
+        color: #f1c40f;
+      }
+
+      span {
+        color: $text-white;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .journey-details {
+    margin-bottom: 1.5rem;
+
+    .time-info {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 2rem;
+      align-items: center;
+
+      .departure,
+      .arrival {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .time {
+          color: $text-white;
+          font-size: 1.5rem;
+          font-weight: 700;
+        }
+
+        .location {
+          color: $text-muted;
+          font-size: 0.95rem;
+        }
+      }
+
+      .arrival {
+        text-align: right;
+      }
+
+      .journey-line {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+
+        .duration {
+          color: $text-light;
+          font-size: 0.85rem;
+          display: flex;
+          align-items: center;
+          gap: 0.3rem;
+          background: rgba(52, 152, 219, 0.2);
+          padding: 0.3rem 0.8rem;
+          border-radius: 12px;
+
+          i {
+            color: $accent-blue;
+          }
+        }
+
+        .line {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          width: 150px;
+
+          .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: $accent-blue;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+          }
+
+          .dashed {
+            flex: 1;
+            height: 2px;
+            background: repeating-linear-gradient(
+              to right,
+              $accent-blue 0,
+              $accent-blue 10px,
+              transparent 10px,
+              transparent 15px
+            );
+          }
+        }
+      }
+    }
+  }
+
+  .bus-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    .bus-stats {
+      display: flex;
+      gap: 2rem;
+
+      .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $text-light;
+        font-size: 0.9rem;
+
+        i {
+          color: $accent-blue;
+        }
+      }
+    }
+
+    .booking-section {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+
+      .price-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+
+        .price-label {
+          color: $text-muted;
+          font-size: 0.8rem;
+        }
+
+        .price {
+          color: $text-white;
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: $accent-green;
+        }
+      }
+
+      .btn-book {
+        background: linear-gradient(135deg, $accent-green 0%, #2ecc71 100%);
+        color: $text-white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-3px);
+          box-shadow: 0 12px 30px rgba(39, 174, 96, 0.4);
+        }
+
+        &:disabled {
+          background: rgba(231, 76, 60, 0.5);
+          cursor: not-allowed;
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+}
+
+// No Results
+.no-results {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 4rem;
+  text-align: center;
+  color: $text-light;
+
+  i {
+    font-size: 4rem;
+    color: $accent-blue;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: $text-white;
+  }
+
+  p {
+    color: $text-muted;
+  }
+}
+
+// Responsive
+@media (max-width: 1024px) {
+  .results-container {
+    grid-template-columns: 1fr;
+  }
+
+  .filters-sidebar {
+    .filter-section {
+      position: static;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .search-summary {
+    .summary-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .route-info {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+  }
+
+  .bus-card {
+    .journey-details {
+      .time-info {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        .journey-line {
+          transform: rotate(90deg);
+          margin: 1rem 0;
+        }
+      }
+    }
+
+    .bus-footer {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+
+      .booking-section {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  }
+}
