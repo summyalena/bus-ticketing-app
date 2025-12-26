@@ -52,6 +52,7 @@ export class BookTicketComponent {
   
   totalAmount = computed(() => {
     const schedule = this.busSchedule();
+    console.log(schedule, 'schedule');
     if (!schedule) return 0;
     return this.selectedSeats().length * schedule.price;
   });
