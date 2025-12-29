@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IBooking } from '../pages/model/search.type';
 
 interface searchParams {
   fromLocation: string;
@@ -12,6 +13,17 @@ interface searchParams {
   providedIn: 'root'
 })
 export class HttpCallService{
+cancelBooking(bookingId: number): Observable<any> {
+  return this.http.delete(`https://api.freeprojectapi.com/api/BusBooking/DeleteBusBooking?id=${bookingId}`);
+}
+
+
+ getMyBookings(customerId: number): Observable<IBooking[]> {
+    return this.http.get<IBooking[]>(
+      `https://api.freeprojectapi.com/api/BusBooking/GetBusBooking?id=${customerId}`
+    );
+  }
+  
  http = inject(HttpClient);
 
  getBusLocations(){

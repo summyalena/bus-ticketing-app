@@ -22,71 +22,57 @@ export class BookTicketComponent {
   router = inject(Router);
   httpCallService = inject(HttpCallService);
   
+  readonly CUSTOMER_ID = 12179;
+  
   scheduleId!: number;
   busSchedule = signal<BusSchedule | null>(null);
   seats = signal<Seat[]>([]);
   bookedSeats = signal<number[]>([]);
-  
-  // ✅ Using your existing IBusBookingPassenger interface
   passengers = signal<IBusBookingPassenger[]>([]);
-  BookingTicket = signal<IBooking | null>({
-    bookingId: 0,
-    custId: 0,
-    bookingDate: '',
-    scheduleId: 0,
-    busBookingPassengers: []
-  });
-
-  BookingData: IBooking = {
-    bookingId: 0,
-    custId: 0,
-    bookingDate: '',
-    scheduleId: 0,
-    busBookingPassengers: []
-  }
   
-  // Computed values
+  isSubmitting = signal(false);
+  
+  showModal = signal(false);
+  modalType = signal<'success' | 'error' | 'warning'>('success');
+  modalTitle = signal('');
+  modalMessage = signal('');
+  modalDetails = signal<string[]>([]);
+  
   selectedSeats = computed(() => 
     this.seats().filter(seat => seat.isSelected)
   );
   
   totalAmount = computed(() => {
     const schedule = this.busSchedule();
-    console.log(schedule, 'schedule');
     if (!schedule) return 0;
     return this.selectedSeats().length * schedule.price;
   });
   
-  // ✅ Check if all passengers are filled
   allPassengersFilled = computed(() => {
     return this.passengers().every(p => 
       p.passengerName && p.age && p.gender && p.seatNo
     );
   });
   
-  // UI State
   activeTab = signal<'seats' | 'info'>('seats');
 
   constructor() {
     this.activatedRoute.params.subscribe(params => {
       this.scheduleId = +params['scheduleId'];
       this.getScheduleDetails();
-      this.BookingData.scheduleId = this.scheduleId;
-      this.BookingData.bookingDate = new Date().toISOString();
-      this.BookingData.custId = 12179;
     });
   }
 
-  postBusBooking(){
-    this.httpCallService.postBooking(this.BookingData).subscribe((res)=> {
-      console.log(res);
-    })
-  }
-
   getScheduleDetails() {
-    this.httpCallService.getBusDetails(this.scheduleId).subscribe((res: BusSchedule) => {
-      this.busSchedule.set(res);
-      this.generateSeats(res.totalSeats);
+    this.httpCallService.getBusDetails(this.scheduleId).subscribe({
+      next: (res: BusSchedule) => {
+        this.busSchedule.set(res);
+        this.generateSeats(res.totalSeats);
+      },
+      error: (error) => {
+        console.error('Error loading bus details:', error);
+        this.showErrorModal('Failed to Load', 'Could not load bus details. Please try again.');
+      }
     });
   }
 
@@ -114,7 +100,6 @@ export class BookTicketComponent {
   }
 
   toggleSeat(seatNumber: number) {
-    // ✅ Update seats selection
     this.seats.update(seats =>
       seats.map(seat =>
         seat.seatNumber === seatNumber && !seat.isBooked
@@ -126,12 +111,10 @@ export class BookTicketComponent {
     const selectedSeatNumbers = this.selectedSeats().map(s => s.seatNumber);
     const currentPassengers = this.passengers();
     
-    // Remove passenger if seat is deselected
     const updatedPassengers = currentPassengers.filter(p => 
       selectedSeatNumbers.includes(p.seatNo)
     );
     
-    // Add new passenger if seat is selected
     const newSeatNumbers = selectedSeatNumbers.filter(sn => 
       !currentPassengers.some(p => p.seatNo === sn)
     );
@@ -150,7 +133,6 @@ export class BookTicketComponent {
     this.passengers.set(updatedPassengers);
   }
 
-  // ✅ Update passenger details
   updatePassenger(index: number, field: keyof IBusBookingPassenger, value: any) {
     this.passengers.update(passengers => {
       const updated = [...passengers];
@@ -187,26 +169,99 @@ export class BookTicketComponent {
     this.activeTab.set(tab);
   }
 
-  proceedToPayment() {
+  showSuccessModal(title: string, message: string, details: string[] = []) {
+    this.modalType.set('success');
+    this.modalTitle.set(title);
+    this.modalMessage.set(message);
+    this.modalDetails.set(details);
+    this.showModal.set(true);
+  }
+
+  showErrorModal(title: string, message: string, details: string[] = []) {
+    this.modalType.set('error');
+    this.modalTitle.set(title);
+    this.modalMessage.set(message);
+    this.modalDetails.set(details);
+    this.showModal.set(true);
+  }
+
+  showWarningModal(title: string, message: string) {
+    this.modalType.set('warning');
+    this.modalTitle.set(title);
+    this.modalMessage.set(message);
+    this.modalDetails.set([]);
+    this.showModal.set(true);
+  }
+
+  closeModal() {
+    this.showModal.set(false);
+  }
+
+  onModalConfirm() {
+    this.closeModal();
+    if (this.modalType() === 'success') {
+      this.router.navigate(['/my-bookings']);
+    }
+  }
+
+  postBusBooking() {
     if (this.selectedSeats().length === 0) {
-      alert('Please select at least one seat');
+      this.showWarningModal('No Seats Selected', 'Please select at least one seat before proceeding.');
       return;
     }
 
-    // ✅ Validate all passengers are filled
     if (!this.allPassengersFilled()) {
-      alert('Please fill in all passenger details');
+      this.showWarningModal('Incomplete Details', 'Please fill in all passenger details before proceeding.');
       return;
     }
 
-    const bookingData = {
+    const bookingData: IBooking = {
+      bookingId: 0,
+      custId: this.CUSTOMER_ID,
+      bookingDate: new Date().toISOString(),
       scheduleId: this.scheduleId,
-      busBookingPassengers: this.passengers(),
-      totalAmount: this.totalAmount(),
-      bookingDate: new Date().toISOString()
+      busBookingPassengers: this.passengers()
     };
 
-    console.log('Booking Data:', bookingData);
-    // this.router.navigate(['/payment'], { state: { bookingData } });
+    console.log('📤 Posting Booking Data:', bookingData);
+
+    this.isSubmitting.set(true);
+
+    this.httpCallService.postBooking(bookingData).subscribe({
+      next: (response: IBooking) => {
+        console.log('✅ Booking successful!', response);
+        this.isSubmitting.set(false);
+        
+        const passengerCount = this.passengers().length;
+        const seatNumbers = this.passengers().map(p => p.seatNo).join(', ');
+        
+        this.showSuccessModal(
+          'Booking Confirmed!',
+          'Your bus ticket has been successfully booked.',
+          [
+            `Booking ID: #${response.bookingId}`,
+            `Seats: ${seatNumbers}`,
+            `Passengers: ${passengerCount}`,
+            `Total Amount: ₦${this.totalAmount()}`
+          ]
+        );
+      },
+      error: (error) => {
+        console.error('❌ Booking failed:', error);
+        this.isSubmitting.set(false);
+        
+        let errorMessage = 'Unable to complete your booking. Please try again.';
+        
+        if (error.status === 0) {
+          errorMessage = 'Cannot connect to server. Please check your internet connection.';
+        } else if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        this.showErrorModal('Booking Failed', errorMessage);
+      }
+    });
   }
 }

@@ -1,0 +1,420 @@
+$primary-dark: #2c3e50;
+$secondary-dark: #34495e;
+$accent-blue: #3498db;
+$accent-green: #27ae60;
+$accent-red: #e74c3c;
+$text-white: #ffffff;
+$text-light: rgba(255, 255, 255, 0.9);
+$text-muted: rgba(255, 255, 255, 0.6);
+
+.bookings-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, $primary-dark 0%, $secondary-dark 100%);
+  padding-bottom: 4rem;
+}
+
+.bookings-header {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3rem 2rem;
+  margin-bottom: 2rem;
+
+  .header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    h1 {
+      color: $text-white;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      i {
+        color: $accent-blue;
+      }
+    }
+
+    p {
+      color: $text-muted;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.bookings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// Filter Tabs
+.filter-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+
+  .tab {
+    flex: 1;
+    min-width: 150px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    color: $text-light;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+
+    i {
+      font-size: 1.2rem;
+    }
+
+    .count {
+      background: rgba(52, 152, 219, 0.3);
+      color: $accent-blue;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      margin-left: auto;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    &.active {
+      background: linear-gradient(135deg, $accent-blue 0%, #5dade2 100%);
+      border-color: $accent-blue;
+      color: $text-white;
+      box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+
+      .count {
+        background: rgba(255, 255, 255, 0.3);
+        color: $text-white;
+      }
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  text-align: center;
+  padding: 4rem;
+  color: $text-light;
+
+  i {
+    font-size: 3rem;
+    color: $accent-blue;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+}
+
+// Empty State
+.empty-state {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 4rem;
+  text-align: center;
+
+  i {
+    font-size: 4rem;
+    color: $accent-blue;
+    opacity: 0.5;
+    margin-bottom: 1.5rem;
+  }
+
+  h3 {
+    color: $text-white;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .btn-search {
+    background: linear-gradient(135deg, $accent-blue 0%, #5dade2 100%);
+    color: $text-white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(52, 152, 219, 0.5);
+    }
+  }
+}
+
+// Bookings List
+.bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.booking-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  }
+
+  .booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+
+    .booking-id {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .label {
+        color: $text-muted;
+        font-size: 0.9rem;
+      }
+
+      .value {
+        color: $accent-blue;
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+    }
+
+    .booking-date {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: $text-light;
+      font-size: 0.95rem;
+
+      i {
+        color: $accent-blue;
+      }
+    }
+  }
+
+  .booking-body {
+    padding: 1.5rem;
+
+    .journey-info {
+      margin-bottom: 1.5rem;
+
+      .route {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+
+        .location {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          i {
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+          }
+
+          span {
+            color: $text-white;
+            font-size: 1rem;
+            font-weight: 600;
+          }
+
+          &.from i {
+            color: #e74c3c;
+          }
+
+          &.to i {
+            color: #27ae60;
+          }
+        }
+
+        .arrow {
+          color: $accent-blue;
+          font-size: 1.5rem;
+        }
+      }
+    }
+
+    .passengers-section {
+      h4 {
+        color: $text-white;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        i {
+          color: $accent-blue;
+        }
+      }
+
+      .passengers-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .passenger-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 1rem;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 8px;
+
+          .passenger-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            i {
+              color: $accent-blue;
+              font-size: 1.5rem;
+            }
+
+            .name {
+              color: $text-white;
+              font-weight: 600;
+            }
+
+            .details {
+              color: $text-muted;
+              font-size: 0.9rem;
+            }
+          }
+
+          .seat-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(52, 152, 219, 0.2);
+            border: 1px solid rgba(52, 152, 219, 0.4);
+            color: $accent-blue;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 700;
+          }
+        }
+      }
+    }
+  }
+
+  .booking-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+
+    button {
+      flex: 1;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+
+      &.btn-view {
+        background: linear-gradient(135deg, $accent-blue 0%, #5dade2 100%);
+        color: $text-white;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+      }
+
+      &.btn-cancel {
+        background: rgba(231, 76, 60, 0.2);
+        border: 2px solid rgba(231, 76, 60, 0.4);
+        color: $accent-red;
+
+        &:hover {
+          background: rgba(231, 76, 60, 0.3);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .bookings-header {
+    padding: 2rem 1rem;
+
+    .header-content h1 {
+      font-size: 1.8rem;
+    }
+  }
+
+  .filter-tabs {
+    .tab {
+      min-width: 100px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .booking-card {
+    .booking-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .booking-body .journey-info .route {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .booking-footer {
+      flex-direction: column;
+    }
+  }
+}

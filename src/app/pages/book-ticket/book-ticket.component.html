@@ -1,6 +1,6 @@
+
 <div class="booking-page">
   @if (busSchedule(); as schedule) {
-  <!-- Bus Info Header -->
   <div class="bus-info-header">
     <div class="header-content">
       <button class="btn-back" (click)="router.navigate(['/search'])">
@@ -112,88 +112,93 @@
 
         <!-- Passenger Details Form -->
         <div class="passenger-form">
-  <h3>
-    <i class="fas fa-user"></i>
-    Passenger Details
-  </h3>
-  
-  @if (passengers().length === 0) {
-    <p class="empty-state">
-      <i class="fas fa-info-circle"></i>
-      Select seats above to add passengers
-    </p>
-  } @else {
-    <div class="passengers-list">
-      @for (passenger of passengers(); track passenger.seatNo; let i = $index) {
-        <div class="passenger-card">
-          <div class="seat-indicator">
-            <i class="fas fa-chair"></i>
-            Seat {{ passenger.seatNo }}
-          </div>
+          <h3>
+            <i class="fas fa-user"></i>
+            Passenger Details
+          </h3>
 
-          <div class="form-grid">
-            <!-- Full Name -->
-            <div class="form-group">
-              <label for="name-{{ i }}">
-                Full Name *
-              </label>
-              <input
-                id="name-{{ i }}"
-                type="text"
-                placeholder="Enter passenger name"
-                [value]="passenger.passengerName"
-                (input)="updatePassenger(i, 'passengerName', $any($event.target).value)"
-              />
-            </div>
-
-            <!-- Age -->
-            <div class="form-group">
-              <label for="age-{{ i }}">
-                Age *
-              </label>
-              <input
-                id="age-{{ i }}"
-                type="number"
-                min="1"
-                max="120"
-                placeholder="Enter age"
-                [value]="passenger.age"
-                (input)="updatePassenger(i, 'age', +$any($event.target).value)"
-              />
-            </div>
-
-            <!-- Gender -->
-            <div class="form-group gender-group">
-              <label>Gender *</label>
-              <div class="radio-group">
-                <label class="radio-label">
-                  <input
-                    type="radio"
-                    [name]="'gender-' + i"
-                    value="Male"
-                    [checked]="passenger.gender === 'Male'"
-                    (change)="updatePassenger(i, 'gender', 'Male')"
-                  />
-                  <span>Male</span>
-                </label>
-                <label class="radio-label">
-                  <input
-                    type="radio"
-                    [name]="'gender-' + i"
-                    value="Female"
-                    [checked]="passenger.gender === 'Female'"
-                    (change)="updatePassenger(i, 'gender', 'Female')"
-                  />
-                  <span>Female</span>
-                </label>
+          @if (passengers().length === 0) {
+          <p class="empty-state">
+            <i class="fas fa-info-circle"></i>
+            Select seats above to add passengers
+          </p>
+          } @else {
+          <div class="passengers-list">
+            @for (passenger of passengers(); track passenger.seatNo; let i =
+            $index) {
+            <div class="passenger-card">
+              <div class="seat-indicator">
+                <i class="fas fa-chair"></i>
+                Seat {{ passenger.seatNo }}
               </div>
+
+              <div class="form-grid">
+                <!-- Full Name -->
+                <div class="form-group">
+                  <label for="name-{{ i }}"> Full Name * </label>
+                  <input
+                    id="name-{{ i }}"
+                    type="text"
+                    placeholder="Enter passenger name"
+                    [value]="passenger.passengerName"
+                    (input)="updatePassenger(i, 'passengerName', $any($event.target).value)"
+                  />
+                </div>
+
+                <!-- Age -->
+                <div class="form-group">
+                  <label for="age-{{ i }}"> Age * </label>
+                  <input
+                    id="age-{{ i }}"
+                    type="number"
+                    min="1"
+                    max="120"
+                    placeholder="Enter age"
+                    [value]="passenger.age"
+                    (input)="updatePassenger(i, 'age', +$any($event.target).value)"
+                  />
+                </div>
+
+                <!-- Gender -->
+                <div class="form-group gender-group">
+                  <label>Gender *</label>
+                  <div class="radio-group">
+                    <label class="radio-label">
+                      <input
+                        type="radio"
+                        [name]="'gender-' + i"
+                        value="Male"
+                        [checked]="passenger.gender === 'Male'"
+                        (change)="updatePassenger(i, 'gender', 'Male')"
+                      />
+                      <span>Male</span>
+                    </label>
+                    <label class="radio-label">
+                      <input
+                        type="radio"
+                        [name]="'gender-' + i"
+                        value="Female"
+                        [checked]="passenger.gender === 'Female'"
+                        (change)="updatePassenger(i, 'gender', 'Female')"
+                      />
+                      <span>Female</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Validation Indicator -->
+              @if (passenger.passengerName && passenger.age && passenger.gender) {
+              <div class="validation-success">
+                <i class="fas fa-check-circle"></i>
+                Complete
+              </div>
+              }
             </div>
+            }
           </div>
+          }
         </div>
-      }
-    </div>
-  }
-</div>
       </div>
       }
 
@@ -309,6 +314,61 @@
       }
     </div>
 
+     @if (showModal()) {
+    <div class="modal-overlay" (click)="closeModal()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Modal Header -->
+        <div class="modal-header" [class.success]="modalType() === 'success'" 
+             [class.error]="modalType() === 'error'"
+             [class.warning]="modalType() === 'warning'">
+          <div class="modal-icon">
+            @if (modalType() === 'success') {
+              <i class="fas fa-check-circle"></i>
+            } @else if (modalType() === 'error') {
+              <i class="fas fa-times-circle"></i>
+            } @else {
+              <i class="fas fa-exclamation-circle"></i>
+            }
+          </div>
+          <h2>{{ modalTitle() }}</h2>
+          <button class="close-btn" (click)="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <p class="modal-message">{{ modalMessage() }}</p>
+          
+          @if (modalDetails().length > 0) {
+            <div class="modal-details">
+              @for (detail of modalDetails(); track $index) {
+                <div class="detail-item">
+                  <i class="fas fa-check"></i>
+                  <span>{{ detail }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer">
+          @if (modalType() === 'success') {
+            <button class="btn-modal btn-primary" (click)="onModalConfirm()">
+              <i class="fas fa-arrow-right"></i>
+              Go to My Bookings
+            </button>
+          } @else {
+            <button class="btn-modal btn-secondary" (click)="closeModal()">
+              <i class="fas fa-times"></i>
+              Close
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
     <!-- Right Section: Booking Summary -->
     <aside class="booking-summary">
       <div class="summary-card">
@@ -361,17 +421,21 @@
             </div>
           </div>
 
-          <!-- Action Button -->
+          <!-- Action Button with Loading State -->
           <button
             class="btn-proceed"
-            [disabled]="selectedSeats().length === 0"
+            [disabled]="selectedSeats().length === 0 || isSubmitting()"
             (click)="postBusBooking()"
           >
+            @if (isSubmitting()) {
+            <i class="fas fa-spinner fa-spin"></i>
+            Processing Booking...
+            } @else {
             <i class="fas fa-credit-card"></i>
-            <!-- Proceed to Payment @if (totalAmount() > 0) {
+            Proceed to Book
+            @if (totalAmount() > 0) {
             <span class="amount">₦{{ totalAmount() }}</span>
-            } -->
-            Proceed to book
+            } }
           </button>
 
           <!-- Cancellation Policy -->
